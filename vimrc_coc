@@ -16,15 +16,39 @@ Plug 'plasticboy/vim-markdown'
 
 "ctrlp
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'puremourning/vimspector'
 
+Plug 'vim-scripts/sessionman.vim'
+
+"自动指定工作目录
+Plug ' airblade/vim-rooter' 
+
+Plug 'ryanoasis/vim-devicons'
+"如果乱码，安装字体
+"mkdir -p ~/.local/share/fonts
+"cd ~/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://
+" github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+Plug 'easymotion/vim-easymotion'
+Plug 'vim-airline/vim-airline'
 " 设置NerdTree
 Plug 'scrooloose/nerdtree'
 Plug 'majutsushi/tagbar'
 Plug 'mbbill/undotree'
 
+"for json
+Plug 'neoclide/coc-json'
+
+Plug 'vim-scripts/Auto-Pairs'
+
 "Vim主题配色
 Plug 'fatih/molokai'
 call plug#end()
+
+”vimspector的调试按键方案
+let g:vimspector_enable_mappings='HUMAN'
+
+"vim-rooter的项目根目录配置
+let g:rooter_patterns = ['.git', 'go.mod', '*.sln', 'build/env.sh','.vimspector.json']
 
 inoremap jk <ESC>
 "启用真彩色
@@ -44,15 +68,12 @@ let g:tagbar_autopreview = 1
 let g:tagbar_sort = 0
 let g:tagbar_width = 30
 
-map <F3> :NERDTreeToggle<CR>
-nmap <F4> :TagbarToggle<CR>
-
+noremap <leader>3 :NERDTreeToggle<CR>
+noremap <leader>4 :TagbarToggle<CR>
 "打开关闭undotree
-nnoremap <F5> :UndotreeToggle<cr>
+nnoremap <leader>5 :UndotreeToggle<cr>
+nnoremap <leader>6 :call QuickfixToggle()<cr>
 
-
-"nnoremap <leader>q :call QuickfixToggle()<cr>
-nnoremap <F6> :call QuickfixToggle()<cr>
 let g:quickfix_is_open = 0
 "切换quickfix窗口开关
 function! QuickfixToggle()
@@ -66,6 +87,24 @@ function! QuickfixToggle()
         let g:quickfix_is_open = 1
     endif
 endfunction
+
+
+"删除非当前buffer以外的所有buffer
+fun! DeleteAllBuffersInWindow()
+    let s:curWinNr= winnr()
+    if winbufnr(s:curWinNr)==1
+        ret
+    endif
+    let s:curBufNr= bufnr("%")
+    exe "bn"
+    let s:nextBufNr= bufnr("%")
+    while s:nextBufNr != s:curBufNr
+        exe "bn"
+        exe "bdel ".s:nextBufNr
+        let s:nextBufNr= bufnr("%")
+    endwhile
+endfun
+map <leader>bda :call DeleteAllBuffersInWindow()<cr>
 
 " 交换文件放到固定目录下
 set directory=$HOME/.vimtmp/swap/
@@ -85,6 +124,11 @@ let undodirname = $HOME . "/.vimtmp/undodir"
 if !isdirectory(undodirname)
   call mkdir(undodirname, "p")
 endif
+
+" 保存session的选项
+"set sessionoptions = blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal
+set sessionoptions -=curdir
+set sessionoptions +=sesdir
 " 关闭缓冲区而不关闭窗口
 command! Bd :bp | :sp | :bn | :bd
 "折叠方式根据对齐来
@@ -115,7 +159,7 @@ let g:syntastic_typescript_tsc_fname = ''
 
 "修改gvim字体和大小，默认10号略小
 set guifont=Monospace\ 11
-set autochdir     " 自动切换当前目录为当前
+"set autochdir     " 自动切换当前目录为当前
 set hidden " 有未保存修改切换缓冲由vim负责保存
 set smartindent  " 开启新行时使用智能自动缩进
 
