@@ -21,7 +21,7 @@ Plug 'puremourning/vimspector'
 Plug 'vim-scripts/sessionman.vim'
 
 "自动指定工作目录
-Plug ' airblade/vim-rooter' 
+Plug 'airblade/vim-rooter' 
 
 Plug 'ryanoasis/vim-devicons'
 "如果乱码，安装字体
@@ -40,11 +40,17 @@ Plug 'neoclide/coc-json'
 
 Plug 'vim-scripts/Auto-Pairs'
 
+Plug 'szw/vim-maximizer'
 "Vim主题配色
 Plug 'fatih/molokai'
 call plug#end()
 
-”vimspector的调试按键方案
+"vim-maximizer的按键映射
+nnoremap <silent><leader>m :MaximizerToggle<CR>
+vnoremap <silent><leader>m :MaximizerToggle<CR>gv
+inoremap <silent><leader>m <C-o>:MaximizerToggle<CR>
+
+"vimspector的调试按键方案
 let g:vimspector_enable_mappings='HUMAN'
 
 "vim-rooter的项目根目录配置
@@ -127,12 +133,13 @@ endif
 
 " 保存session的选项
 "set sessionoptions = blank,buffers,curdir,folds,help,options,tabpages,winsize,terminal
-set sessionoptions -=curdir
-set sessionoptions +=sesdir
+"set sessionoptions -=curdir
+"set sessionoptions +=sesdir
 " 关闭缓冲区而不关闭窗口
 command! Bd :bp | :sp | :bn | :bd
 "折叠方式根据对齐来
-set foldmethod=indent
+"set foldmethod=indent
+"set foldmethod=marker
 
 set number
 set nocompatible     " 关闭 vi 兼容模式
