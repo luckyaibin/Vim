@@ -13,21 +13,25 @@ Plug 'godlygeek/tabular'
 
 "markdown
 Plug 'plasticboy/vim-markdown'
-
+"使用leaderf+ripgrep进行搜索
+Plug 'Yggdroot/LeaderF'
 "ctrlp
 Plug 'ctrlpvim/ctrlp.vim'
+"ack use ripgrep to search 
+Plug 'mileszs/ack.vim'
+"debug frontend
 Plug 'puremourning/vimspector'
+
+"Plug 'tpope/vim-fugitive'
 
 Plug 'vim-scripts/sessionman.vim'
 
 "自动指定工作目录
 Plug 'airblade/vim-rooter' 
 
-Plug 'ryanoasis/vim-devicons'
 "如果乱码，安装字体
 "mkdir -p ~/.local/share/fonts
-"cd ~/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://
-" github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
+"cd ~/.local/share/fonts && curl -fLo "Droid Sans Mono for Powerline Nerd Font Complete.otf" https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/complete/Droid%20Sans%20Mono%20Nerd%20Font%20Complete.otf
 Plug 'easymotion/vim-easymotion'
 Plug 'vim-airline/vim-airline'
 " 设置NerdTree
@@ -43,16 +47,47 @@ Plug 'vim-scripts/Auto-Pairs'
 Plug 'szw/vim-maximizer'
 "Vim主题配色
 Plug 'fatih/molokai'
+
+Plug 'ryanoasis/vim-devicons'
+
 call plug#end()
 
+" ack.vim --- {{{
+" Use ripgrep for searching ⚡️
+" Options include:
+" --vimgrep -> Needed to parse the rg response properly for ack.vim
+" --type-not sql -> Avoid huge sql file dumps as it slows down the search
+" --smart-case -> Search case insensitive if all lowercase pattern, Search case sensitively otherwise
+let g:ackprg = 'rg --vimgrep --type-not sql --smart-case'
+" Auto close the Quickfix list after pressing '<enter>' on a list item
+let g:ack_autoclose = 1
+" Any empty ack search will search for the work the cursor is on
+let g:ack_use_cword_for_empty_search = 1
+" Don't jump to first match
+cnoreabbrev Ack Ack!
+" Maps <leader>/ so we're ready to type the search keyword
+nnoremap <Leader>/ :Ack!<Space>
+" }}}
+
+
 "vim-maximizer的按键映射
-nnoremap <silent><leader>m :MaximizerToggle<CR>
-vnoremap <silent><leader>m :MaximizerToggle<CR>gv
-inoremap <silent><leader>m <C-o>:MaximizerToggle<CR>
+nnoremap <silent><leader>mm :MaximizerToggle<CR>
+vnoremap <silent><leader>mm :MaximizerToggle<CR>gv
+inoremap <silent><leader>mm <C-o>:MaximizerToggle<CR>
 
 "vimspector的调试按键方案
 let g:vimspector_enable_mappings='HUMAN'
+nmap <leader>dd :call vimspector#Launch()<CR>
+nmap <leader>dx :VimspectorReset<CR>
 
+nmap <leader>5 <F5>cr>
+nmap <leader>6 <F6>cr>
+nmap <leader>7 <F7>cr>
+nmap <leader>8 <F8>cr>
+nmap <leader>9 <F9>cr>
+nmap <leader>10 <F10>cr>
+nmap <leader>11 <F11>cr>
+nmap <leader>12 <F12>cr>
 "vim-rooter的项目根目录配置
 let g:rooter_patterns = ['.git', 'go.mod', '*.sln', 'build/env.sh','.vimspector.json']
 
@@ -74,11 +109,11 @@ let g:tagbar_autopreview = 1
 let g:tagbar_sort = 0
 let g:tagbar_width = 30
 
-noremap <leader>3 :NERDTreeToggle<CR>
-noremap <leader>4 :TagbarToggle<CR>
+noremap <leader>m3 :NERDTreeToggle<CR>
+noremap <leader>m4 :TagbarToggle<CR>
 "打开关闭undotree
-nnoremap <leader>5 :UndotreeToggle<cr>
-nnoremap <leader>6 :call QuickfixToggle()<cr>
+nnoremap <leader>m5 :UndotreeToggle<cr>
+nnoremap <leader>m6 :call QuickfixToggle()<cr>
 
 let g:quickfix_is_open = 0
 "切换quickfix窗口开关
@@ -165,7 +200,9 @@ set vb t_vb=
 let g:syntastic_typescript_tsc_fname = ''
 
 "修改gvim字体和大小，默认10号略小
-set guifont=Monospace\ 11
+"set guifont=Monospace\ 13
+set guifont=DroidSansMono\ Nerd\ Font\ 13
+
 "set autochdir     " 自动切换当前目录为当前
 set hidden " 有未保存修改切换缓冲由vim负责保存
 set smartindent  " 开启新行时使用智能自动缩进
@@ -179,6 +216,41 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
+"""""""""""""""""""""""""""""""""for Leaderf""""""""""""""""""""""
+" don't show the help in normal mode
+let g:Lf_HideHelp = 1
+let g:Lf_UseCache = 0
+let g:Lf_UseVersionControlTool = 0
+let g:Lf_IgnoreCurrentBufferName = 1
+" popup mode
+let g:Lf_WindowPosition = 'popup'
+let g:Lf_PreviewInPopup = 1
+let g:Lf_StlSeparator = { 'left': "\ue0b0", 'right': "\ue0b2", 'font': "DejaVu Sans Mono for Powerline" }
+let g:Lf_PreviewResult = {'Function': 0, 'BufTag': 0 }
+
+let g:Lf_ShortcutF = "<leader>ff"
+noremap <leader>fb :<C-U><C-R>=printf("Leaderf buffer %s", "")<CR><CR>
+noremap <leader>fm :<C-U><C-R>=printf("Leaderf mru %s", "")<CR><CR>
+noremap <leader>ft :<C-U><C-R>=printf("Leaderf bufTag %s", "")<CR><CR>
+noremap <leader>fl :<C-U><C-R>=printf("Leaderf line %s", "")<CR><CR>
+
+noremap <C-B> :<C-U><C-R>=printf("Leaderf! rg --current-buffer -e %s ", expand("<cword>"))<CR>
+noremap <C-F> :<C-U><C-R>=printf("Leaderf! rg -e %s ", expand("<cword>"))<CR>
+" search visually selected text literally
+xnoremap gf :<C-U><C-R>=printf("Leaderf! rg -F -e %s ", leaderf#Rg#visual())<CR>
+noremap go :<C-U>Leaderf! rg --recall<CR>
+
+" should use `Leaderf gtags --update` first
+let g:Lf_GtagsAutoGenerate = 0
+let g:Lf_Gtagslabel = 'native-pygments'
+noremap <leader>fr :<C-U><C-R>=printf("Leaderf! gtags -r %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>fd :<C-U><C-R>=printf("Leaderf! gtags -d %s --auto-jump", expand("<cword>"))<CR><CR>
+noremap <leader>fo :<C-U><C-R>=printf("Leaderf! gtags --recall %s", "")<CR><CR>
+noremap <leader>fn :<C-U><C-R>=printf("Leaderf gtags --next %s", "")<CR><CR>
+noremap <leader>fp :<C-U><C-R>=printf("Leaderf gtags --previous %s", "")<CR><CR>
+
+
+let g:coc_disable_startup_warning = 1
 """""""""""""""""""""""for coc.vim """""""""""""""""""""
 " TextEdit might fail if hidden is not set.
 set hidden
@@ -263,8 +335,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+"xmap <leader>f  <Plug>(coc-format-selected)
+"nmap <leader>f  <Plug>(coc-format-selected)
 
 augroup mygroup
   autocmd!
